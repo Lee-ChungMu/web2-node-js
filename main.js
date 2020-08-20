@@ -10,7 +10,9 @@ var app = http.createServer(function(request,response){
       _url = '/index.html';
     }
     if(_url == '/favicon.ico'){
-      return response.writeHead(404);
+      response.writeHead(404);
+      response.end();
+      return;
     }
     response.writeHead(200);
     response.end(queryData.id);
