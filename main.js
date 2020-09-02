@@ -92,7 +92,7 @@ var app = http.createServer(function(request,response){
       });//end뒤 콜백함수가 실행됬을  정보수신이 끝났다를 의미
     } else if(pathname === '/update'){
       fs.readdir('./data', function(error, filelist){
-        fs.readFile(`data/${queryData.id}`, 'utf8', function(err, descripion){
+        fs.readFile(`data/${queryData.id}`, 'utf8', function(err, description){
           var title = queryData.id;
           var list = templateList(filelist);
           var template = templateHTML(title, list, `<form action = "/update_process" method="post">
@@ -109,7 +109,25 @@ var app = http.createServer(function(request,response){
           response.end(template);
         });
       });
-    } else {
+    } else if(pathname === '/update_process'){
+      var body = '';
+      request.on('data', function(data){
+        body = body + data;
+      });
+      request.on('end', function(){
+        var post = qs.parse(body);
+        var title = post.title;
+        var description = post.description;
+        var id = post.id;
+        fs.rename(`data/${id}`, `data/${title}`, function(error){
+          fs.writeFile(`data/${title}`, description, 'utf8', function(err){
+            response.writeHead(302, {Location: `/?id=${title}`});
+            response.end();
+          })
+        })
+        console.log(post);
+      });
+    }  else {
       response.writeHead(404);
       response.end('not found');
     }
