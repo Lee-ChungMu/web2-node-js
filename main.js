@@ -85,9 +85,11 @@ var app = http.createServer(function(request,response){
         var post = qs.parse(body);//지금까지 저장한 바디를 입력값으로 주면 post변수에 post데이터가 들어있을거라는 뜻
         var title = post.title;
         var description = post.description;
+        fs.writeFile(`data/${title}`, description, 'utf8', function(err){
+          response.writeHead(302, {Location: `/?id=${title}`});
+          response.end();
+        })
       });//end뒤 콜백함수가 실행됬을  정보수신이 끝났다를 의미
-      response.writeHead(200);
-      response.end("success");
     }
     else {
       response.writeHead(404);
